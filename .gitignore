@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+mlruns/
+mlartifacts/
+.env
+venv/
+.venv/
+data/bank-additional-full.csv
+data/bank_marketing_clean.csv
+data/bank_marketing_arms.csv
+.venv311/
+venv311/
+venv311

@@ -109,12 +109,7 @@ latência/erro) via **Amazon CloudWatch**. Decisões sensíveis mantêm humano n
 o endpoint `/feedback` registra o resultado observado antes de qualquer atualização
 de política.
 
-### Passo a passo de deploy na AWS (ECS Express Mode — mais simples)
-
-> Nota: o AWS App Runner deixou de aceitar novos clientes a partir de 30/04/2026.
-> O ECS Express Mode é o substituto oficial recomendado pela própria AWS, com a
-> mesma proposta de simplicidade (uma imagem no ECR, o serviço é provisionado
-> automaticamente).
+### Passo a passo de deploy na AWS (ECS Express Mode)
 
 1. **Criar bucket S3** para dados e artefatos MLflow:
    ```bash
@@ -174,5 +169,3 @@ disponível na apresentação/pitch.
 - Braços (ofertas) são simulados a partir de fatores multiplicativos sobre a
   propensão real, já que a base Kaggle não tem múltiplas ofertas nativamente —
   decisão documentada no notebook de EDA.
-- Não deve ser usado com dados reais de clientes sem revisão de governança,
-  base legal e humano no loop para decisões sensíveis.

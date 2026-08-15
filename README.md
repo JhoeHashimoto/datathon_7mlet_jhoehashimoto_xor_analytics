@@ -91,7 +91,7 @@ novos clientes — a própria AWS recomenda o ECS Express Mode como substituto o
 mantendo a mesma simplicidade de deploy (uma imagem no ECR gera automaticamente um
 serviço Fargate, Load Balancer, auto scaling e uma URL pública).
 
-**URL da API em produção:** `https://SEU-SERVICO.ecs.us-east-1.on.aws`
+**URL da API em produção:** `https://xo-2bc1a381e7d940faa460f33faaea4808.ecs.us-east-1.on.aws/docs`
 
 ## Arquitetura-alvo em nuvem (AWS)
 
@@ -118,7 +118,7 @@ de política.
 
 1. **Criar bucket S3** para dados e artefatos MLflow:
    ```bash
-   aws s3 mb s3://datathon-grupo-xx-mlflow
+   aws s3 mb s3:/datathon_7mlet_jhoehashimoto_xor_analytics-grupo-xx-mlflow
    ```
 
 2. **Criar repositório no ECR:**
@@ -129,12 +129,14 @@ de política.
 3. **Build e push da imagem Docker:**
    ```bash
    aws ecr get-login-password --region us-east-1 | docker login --username AWS \
-     --password-stdin <ID_DA_CONTA>.dkr.ecr.us-east-1.amazonaws.com
+  --password-stdin 989879505254.dkr.ecr.us-east-1.amazonaws.com
+
+   git clone https://github.com/JhoeHashimoto/datathon_7mlet_jhoehashimoto_xor_analytics.git
+   cd datathon_7mlet_jhoehashimoto_xor_analytics/
 
    docker build -t xor-analytics .
-   docker tag xor-analytics:latest \
-     <ID_DA_CONTA>.dkr.ecr.us-east-1.amazonaws.com/xor-analytics:latest
-   docker push <ID_DA_CONTA>.dkr.ecr.us-east-1.amazonaws.com/xor-analytics:latest
+   docker tag xor-analytics:latest 989879505254.dkr.ecr.us-east-1.amazonaws.com/xor-analytics:latest
+   docker push 989879505254.dkr.ecr.us-east-1.amazonaws.com/xor-analytics:latest
    ```
 
 4. **Criar o serviço no Amazon ECS Express Mode** apontando para a imagem no ECR:
@@ -148,7 +150,7 @@ de política.
 
 5. **Testar o endpoint público** gerado pelo Express Mode:
    ```bash
-   curl -X POST https://<servico>.ecs.us-east-1.on.aws/recomendar \
+   curl -X POST https://xo-2bc1a381e7d940faa460f33faaea4808.ecs.us-east-1.on.aws/recomendar \
      -H "Content-Type: application/json" \
      -d '{"idade": 35, "profissao": "admin.", "estado_civil": "married"}'
    ```

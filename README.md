@@ -17,6 +17,9 @@ reais de clientes, identificadores, renda, gênero ou raça — a base é públi
 
 ## Arquitetura da solução
 
+
+![xor_arcquitecture](xor_arcquitecture.png)
+
 ```
 notebooks/01_eda.ipynb          -> EDA, limpeza e simulação de braços (ofertas)
 notebooks/02_bandit_mlflow.ipynb -> Baseline vs Thompson Sampling + registro no MLflow

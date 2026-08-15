@@ -10,7 +10,7 @@ tráfego e demoram a reagir a mudanças de contexto. Este projeto implementa uma
 abordagem adaptativa (**multi-armed bandit**, via **Thompson Sampling**) que aprende
 com as respostas observadas e supera uma política de regra fixa (baseline).
 
-**Base de dados:** [Bank Marketing Dataset (Kaggle — henriqueyamahata)](https://www.kaggle.com/datasets/henriqueyamahata/bank-marketing)
+**Base de dados:** [Bank Marketing Dataset](https://www.kaggle.com/datasets/henriqueyamahata/bank-marketing)
 Usada como proxy de propensão/conversão de clientes bancários. A coluna `duration` foi
 removida por vazamento temporal (só é conhecida após a ligação ocorrer). Não há dados
 reais de clientes, identificadores, renda, gênero ou raça — a base é pública e anonimizada.

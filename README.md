@@ -1,6 +1,6 @@
-# Datathon 7MLET — Plataforma de Experimentação Adaptativa (Bandit)
+# Datathon 7MLET — Plataforma de Experimentação Adaptativa (Bandit) - XOR ANALYTICS
 
-**Grupo XX**
+**Grupo Jhoe Hashimoto**
 
 ## Visão do problema
 
@@ -22,9 +22,10 @@ notebooks/01_eda.ipynb          -> EDA, limpeza e simulação de braços (oferta
 notebooks/02_bandit_mlflow.ipynb -> Baseline vs Thompson Sampling + registro no MLflow
 src/bandit.py                   -> implementação reutilizável do Thompson Sampling
 src/api.py                      -> API FastAPI que serve a recomendação
-Dockerfile                      -> empacotamento para deploy na AWS
+Dockerfile                      -> empacotamento para deploy na AWS (ECS Express Mode)
 data/                           -> dados brutos, tratados e modelo treinado (.pkl)
 ```
+
 
 ## Como executar localmente
 
@@ -78,6 +79,17 @@ data/                           -> dados brutos, tratados e modelo treinado (.pk
 5 clientes de exemplo com a oferta recomendada pelo modelo estão documentados na
 seção final do notebook `02_bandit_mlflow.ipynb`.
 
+## Deploy da demo
+
+A API foi publicada na AWS via **Amazon ECS Express Mode**, usando a mesma imagem
+Docker versionada no Amazon ECR (`xor-analytics:latest`). Optamos pelo ECS Express Mode
+em vez do AWS App Runner porque, a partir de 30/04/2026, o App Runner deixou de aceitar
+novos clientes — a própria AWS recomenda o ECS Express Mode como substituto oficial,
+mantendo a mesma simplicidade de deploy (uma imagem no ECR gera automaticamente um
+serviço Fargate, Load Balancer, auto scaling e uma URL pública).
+
+**URL da API em produção:** `https://SEU-SERVICO.ecs.us-east-1.on.aws`
+
 ## Arquitetura-alvo em nuvem (AWS)
 
 Para colocar essa solução em produção, usaríamos o **Amazon S3** para versionar os
@@ -86,14 +98,20 @@ O treinamento do bandit rodaria em uma rotina agendada no **Amazon ECS Fargate**
 (ou uma função **AWS Lambda**, dado o baixo custo computacional do Thompson Sampling),
 persistindo o estado do modelo (alpha/beta por braço) de volta no S3. A API FastAPI
 seria empacotada em container e publicada no **Amazon ECR**, servida por
-**AWS App Runner** (opção mais simples, sem gerenciar cluster) ou **ECS Fargate**
+**Amazon ECS Express Mode** (opção mais simples, sem gerenciar cluster manualmente —
+substituto oficial do AWS App Runner desde abril de 2026) ou ECS Fargate clássico
 atrás de um **Application Load Balancer**. Autenticação e acesso entre serviços via
 **IAM roles** com privilégio mínimo, e observabilidade (logs, métricas, alarmes de
 latência/erro) via **Amazon CloudWatch**. Decisões sensíveis mantêm humano no loop:
 o endpoint `/feedback` registra o resultado observado antes de qualquer atualização
 de política.
 
-### Passo a passo de deploy na AWS (App Runner — mais simples)
+### Passo a passo de deploy na AWS (ECS Express Mode — mais simples)
+
+> Nota: o AWS App Runner deixou de aceitar novos clientes a partir de 30/04/2026.
+> O ECS Express Mode é o substituto oficial recomendado pela própria AWS, com a
+> mesma proposta de simplicidade (uma imagem no ECR, o serviço é provisionado
+> automaticamente).
 
 1. **Criar bucket S3** para dados e artefatos MLflow:
    ```bash
@@ -102,7 +120,7 @@ de política.
 
 2. **Criar repositório no ECR:**
    ```bash
-   aws ecr create-repository --repository-name datathon-bandit-api
+   aws ecr create-repository --repository-name xor-analytics
    ```
 
 3. **Build e push da imagem Docker:**
@@ -110,22 +128,24 @@ de política.
    aws ecr get-login-password --region us-east-1 | docker login --username AWS \
      --password-stdin <ID_DA_CONTA>.dkr.ecr.us-east-1.amazonaws.com
 
-   docker build -t datathon-bandit-api .
-   docker tag datathon-bandit-api:latest \
-     <ID_DA_CONTA>.dkr.ecr.us-east-1.amazonaws.com/datathon-bandit-api:latest
-   docker push <ID_DA_CONTA>.dkr.ecr.us-east-1.amazonaws.com/datathon-bandit-api:latest
+   docker build -t xor-analytics .
+   docker tag xor-analytics:latest \
+     <ID_DA_CONTA>.dkr.ecr.us-east-1.amazonaws.com/xor-analytics:latest
+   docker push <ID_DA_CONTA>.dkr.ecr.us-east-1.amazonaws.com/xor-analytics:latest
    ```
 
-4. **Criar o serviço no AWS App Runner** apontando para a imagem no ECR:
-   - Console AWS → App Runner → Create service → Container registry → Amazon ECR
-   - Selecionar a imagem `datathon-bandit-api:latest`
-   - Porta: `8080`
-   - CPU/Memória: 1 vCPU / 2 GB (suficiente para o MVP)
-   - Deploy automático (opcional): a cada push de imagem no ECR
+4. **Criar o serviço no Amazon ECS Express Mode** apontando para a imagem no ECR:
+   - Console AWS → Elastic Container Service → Express mode → Browse ECR images
+   - Selecionar a imagem `xor-analytics:latest`
+   - Task execution role / Infrastructure role: "Create new role" (primeira vez)
+   - Container port: `8080`
+   - Health check path: `/health`
+   - Clicar em Create (se der erro de service-linked role na primeira tentativa,
+     aguardar alguns segundos e tentar de novo — é comportamento esperado)
 
-5. **Testar o endpoint público** gerado pelo App Runner:
+5. **Testar o endpoint público** gerado pelo Express Mode:
    ```bash
-   curl -X POST https://<url-do-app-runner>/recomendar \
+   curl -X POST https://<servico>.ecs.us-east-1.on.aws/recomendar \
      -H "Content-Type: application/json" \
      -d '{"idade": 35, "profissao": "admin.", "estado_civil": "married"}'
    ```

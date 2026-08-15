@@ -85,7 +85,7 @@ seção final do notebook `02_bandit_mlflow.ipynb`.
 ## Deploy da demo
 
 A API foi publicada na AWS via **Amazon ECS Express Mode**, usando a mesma imagem
-Docker versionada no Amazon ECR (`xor-analytics:latest`). Optamos pelo ECS Express Mode
+Docker versionada no Amazon ECR (`xor-analytics:latest`). Optei pelo ECS Express Mode
 em vez do AWS App Runner porque, a partir de 30/04/2026, o App Runner deixou de aceitar
 novos clientes — a própria AWS recomenda o ECS Express Mode como substituto oficial,
 mantendo a mesma simplicidade de deploy (uma imagem no ECR gera automaticamente um
@@ -95,7 +95,7 @@ serviço Fargate, Load Balancer, auto scaling e uma URL pública).
 
 ## Arquitetura-alvo em nuvem (AWS)
 
-Para colocar essa solução em produção, usaríamos o **Amazon S3** para versionar os
+Para colocar essa solução em produção, usamos o **Amazon S3** para versionar os
 dados brutos, tratados e os artefatos do MLflow (bucket dedicado como backend store).
 O treinamento do bandit rodaria em uma rotina agendada no **Amazon ECS Fargate**
 (ou uma função **AWS Lambda**, dado o baixo custo computacional do Thompson Sampling),

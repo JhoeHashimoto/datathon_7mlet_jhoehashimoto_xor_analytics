@@ -2,6 +2,9 @@
 
 **Grupo Jhoe Hashimoto**
 
+VIDEO PITCH:
+https://youtu.be/Khx_RAUbhhc
+
 ## Visão do problema
 
 Uma instituição financeira digital precisa decidir, em diferentes canais, qual oferta

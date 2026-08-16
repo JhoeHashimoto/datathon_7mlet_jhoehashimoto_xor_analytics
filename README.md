@@ -77,7 +77,7 @@ data/                           -> dados brutos, tratados e modelo treinado (.pk
   com prior não-informativo Beta(1,1). A cada rodada, amostra da posterior de cada braço
   e escolhe o maior valor amostrado (exploração bayesiana), depois atualiza a posterior
   com a recompensa observada.
-- Resultado: o Thompson Sampling supera o baseline em taxa de conversão acumulada no momento inicial até 10000k
+- Resultado: o Thompson Sampling supera o baseline em taxa de conversão acumulada no momento inicial até 10k, mas depois se iguala com o baseline, é possível calibrar diminuindo o baseline warmup e ajustando os arms_factors de oferta A,B,C . Foi utilizado Oferta_A = 1, Oferta_B = 0.85 E Oferta_C = 1.15
   (ver gráfico e métricas no notebook `02_bandit_mlflow.ipynb` e no MLflow).
 
 ## Golden Set

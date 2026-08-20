@@ -1,4 +1,4 @@
-# Datathon 7MLET — Plataforma de Experimentação Adaptativa (Bandit) - XOR ANALYTICS
+# Datathon 7MLET — - XOR ANALYTICS
 
 **Grupo Jhoe Hashimoto**
 
